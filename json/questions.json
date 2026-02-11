@@ -1,0 +1,22 @@
+[
+    {
+        "question": "Which data structure uses LIFO?",
+        "options": ["Queue", "Stack", "Tree", "Graph"],
+        "correct_index": 1
+    },
+    {
+        "question": "What is the complexity of binary search?",
+        "options": ["O(n)", "O(log n)", "O(n^2)", "O(1)"],
+        "correct_index": 1
+    },
+    {
+        "question": "Which keyword is used to define a function in Python?",
+        "options": ["func", "def", "define", "lambda"],
+        "correct_index": 1
+    },
+    {
+        "question": "Who is known as the father of the computer?",
+        "options": ["Alan Turing", "Charles Babbage", "Ada Lovelace", "Steve Jobs"],
+        "correct_index": 1
+    }
+]
