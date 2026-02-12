@@ -28,7 +28,7 @@ async def signup(
     picture: UploadFile = File(...),
 ):
     # save pics
-    pic_path =  os.getcwd() + "\\uploads\\" + picture.filename
+    pic_path =  f"{os.getcwd()}\\uploads\\{picture.file}"
     with open(pic_path, "wb") as buf:
         copyfileobj(picture.file, buf)
 
