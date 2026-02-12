@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from .login_view import LoginView
-from .quiz_view import QuizView
+from .test_view import TestView
 
 
 class EntryTestApp(ctk.CTk):
@@ -21,7 +21,7 @@ class EntryTestApp(ctk.CTk):
 
     def start_app(self, user_data):
         self.clear_screen()
-        QuizView(self, user_data, self.show_auth,self.config).grid(row=0, column=0, sticky="nsew")
+        TestView(self, user_data, self.show_auth,self.config).grid(row=0, column=0, sticky="nsew")
 
     def clear_screen(self):
         for widget in self.winfo_children():

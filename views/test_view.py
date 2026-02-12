@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from database.database_manager import DatabaseManager
 
-class QuizView(ctk.CTkFrame):
+class TestView(ctk.CTkFrame):
     def __init__(self, master, user_data, on_logout,config):
         super().__init__(master, fg_color="transparent")
         self.config = config
