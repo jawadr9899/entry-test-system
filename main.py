@@ -5,7 +5,7 @@ from database.loader import load_data
 
 #config
 config_dict = {
-    "PER_QUESTION_TIME" : 0.1, # mins  
+    "PER_QUESTION_TIME" : 5, # mins  
     "APP_SIZE" : "900x600",
     "THEME_COLOR" : "dark-blue",
     "FONT_HEADER" : ("Roboto Medium", 26),
