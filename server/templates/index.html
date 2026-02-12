@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>ShadCN Style Form</title>
+
+</head>
+
+<body class="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+
+  <div class="w-full max-w-2xl bg-white shadow-xl rounded-2xl border border-slate-200 p-8">
+
+    <h2 class="text-2xl font-semibold text-slate-800 mb-6">
+      Create Account
+    </h2>
+
+    <form class="space-y-2" action="/signup" method="post" enctype="multipart/form-data">
+
+      <!-- Grid Fields -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <!-- Name -->
+        <div class="space-y-2">
+          <label class="text-sm font-medium text-slate-700">Full Name</label>
+          <input autocomplete="off" type="text" name="name" placeholder="John Doe" class="w-full h-11 px-4 rounded-xl border border-slate-300 bg-white text-sm shadow-sm
+                   focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-slate-900
+                   transition-all duration-200" />
+        </div>
+
+        <!-- Email -->
+        <div class="space-y-2">
+          <label class="text-sm font-medium text-slate-700">Email</label>
+          <input autocomplete="off" type="email" name="email" placeholder="john@example.com" class="w-full h-11 px-4 rounded-xl border border-slate-300 bg-white text-sm shadow-sm
+                   focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-slate-900
+                   transition-all duration-200" />
+        </div>
+
+        <!-- Phone -->
+        <div class="space-y-2">
+          <label class="text-sm font-medium text-slate-700">Phone Number</label>
+          <input autocomplete="off" name="phone" type="tel" placeholder="03XXXXXXXXX" class="w-full h-11 px-4 rounded-xl border border-slate-300 bg-white text-sm shadow-sm
+                   focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-slate-900
+                   transition-all duration-200" />
+        </div>
+
+        <!-- CNIC -->
+        <div class="space-y-2">
+          <label class="text-sm font-medium text-slate-700">CNIC</label>
+          <input autocomplete="off" type="text" pattern="\d{14}" name="cnic" maxlength="14"
+            placeholder="Enter 14 digit CNIC" class="w-full h-11 px-4 rounded-xl border border-slate-300 bg-white text-sm shadow-sm
+                   focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-slate-900
+                   transition-all duration-200" />
+          <p class="text-xs text-slate-500">Must be exactly 14 digits</p>
+        </div>
+
+        <!-- Password -->
+        <div class="space-y-2 md:col-span-2">
+          <label class="text-sm font-medium text-slate-700">Password</label>
+          <input autocomplete="off" name="password" type="password" placeholder="••••••••" class="w-full h-11 px-4 rounded-xl border border-slate-300 bg-white text-sm shadow-sm
+                   focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-slate-900
+                   transition-all duration-200" />
+        </div>
+
+      </div>
+
+      <!-- Upload Field (Full Width) -->
+  <div class="space-y-4">
+  <label class="text-sm font-medium text-slate-700 ">
+    Upload Picture
+  </label>
+
+  <input
+    type="file"
+    name="picture"
+    accept="image/png, image/jpeg"
+    class="block w-full text-sm text-slate-600
+           file:mr-4 file:py-2 file:px-4
+           file:rounded-lg file:border-0
+           file:text-sm file:font-medium
+           file:bg-slate-900 file:text-white
+           hover:file:bg-slate-800
+           border border-slate-300 rounded-xl
+           cursor-pointer"
+  />
+</div>
+
+      <!-- Submit Button -->
+      <div class="pt-4">
+        <button type="submit" class="w-full h-11 bg-slate-900 text-white text-sm font-medium 
+                 rounded-xl shadow-md hover:bg-slate-800 
+                 transition-all duration-200">
+          Submit
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <script  src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+</body>
+
+</html>

@@ -1,3 +1,4 @@
+import os
 import sqlite3
 import hashlib
 
@@ -10,7 +11,11 @@ class DatabaseManager:
         DB_NAME = "database/sqlite/" + database_name 
         
     @staticmethod
-    def init_db():
+    def init_db(path:str=""):
+        global DB_NAME
+        if len(DB_NAME) == 0:
+            DB_NAME = path
+
         with sqlite3.connect(DB_NAME) as conn:
             cur = conn.cursor()
             cur.execute("""
@@ -18,7 +23,10 @@ class DatabaseManager:
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     name TEXT,
                     roll_no TEXT UNIQUE,
+                    email TEXT UNIQUE,
+                    cnic TEXT UNIQUE,
                     password TEXT,
+                    pic_path TEXT,
                     score INTEGER DEFAULT 0
                 )
             """)
@@ -40,13 +48,13 @@ class DatabaseManager:
             conn.commit()
 
     @staticmethod
-    def add_student(name, roll_no, password):
+    def add_student(name, roll_no, email, cnic,password,pic_path):
         hashed = hashlib.sha256(password.encode()).hexdigest()
         with sqlite3.connect(DB_NAME) as conn:
             try:
                 conn.execute(
-                    "INSERT INTO users (name, roll_no, password) VALUES (?, ?, ?)",
-                    (name, roll_no, hashed),
+                    "INSERT INTO users (name, roll_no, email, cnic, password, pic_path) VALUES (?, ?, ?,?,?,?)",
+                    (name, roll_no, email,cnic, hashed, pic_path),
                 )
             except sqlite3.IntegrityError:
                 print(f"Skipping duplicate: {roll_no}")
@@ -69,7 +77,7 @@ class DatabaseManager:
             if stored_password != hashed:
                 return None, "Incorrect Password"
                 
-            cur.execute("SELECT id, name, roll_no FROM users WHERE roll_no=?", (roll_no,))
+            cur.execute("SELECT id, name, roll_no,cnic,pic_path FROM users WHERE roll_no=?", (roll_no,))
             user = cur.fetchone()
             return user, None
 
