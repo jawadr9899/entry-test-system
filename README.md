@@ -1,5 +1,5 @@
 ### Entry Test System
-Universities like but pythonic entry test system simulation software
+Universities like but pythonic entry test system simulation software with SQLite
 
 ### Screenshots
 <p float="left">
