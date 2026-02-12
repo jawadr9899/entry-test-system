@@ -28,12 +28,12 @@ async def signup(
     picture: UploadFile = File(...),
 ):
     # save pics
-    pic_path =  f"{os.getcwd()}\\uploads\\{picture.file}"
+    pic_path =  f"{os.getcwd()}\\uploads\\{picture.filename}"
     with open(pic_path, "wb") as buf:
         copyfileobj(picture.file, buf)
 
     # generate roll_no
-    roll_no = f"{name}-{datetime.today().year}-{str(datetime.today().microsecond)[:-4]}"
+    roll_no = f"{name.split(" ")[0]}-{datetime.today().year}-{str(datetime.today().microsecond)[:-4]}"
 
     #init db
     DatabaseManager.init_db(f"../database/sqlite/{config.DB_NAME}")

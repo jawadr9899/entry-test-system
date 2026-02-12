@@ -1,3 +1,4 @@
+import sqlite3
 import json
 import os
 from .database_manager import DatabaseManager
@@ -11,7 +12,10 @@ def load_data(database_name:str):
         with open("json/questions.json", "r") as f:
             q_data = json.load(f)
             for q in q_data:
-                DatabaseManager.add_question(q["question"], q["options"], q["correct_index"])
+                try:
+                  DatabaseManager.add_question(q["question"], q["options"], q["correct_index"])  
+                except sqlite3.IntegrityError:
+                    continue 
         print(f"Loaded {len(q_data)} questions.")
     else:
         print("Warning: questions.json not found.")

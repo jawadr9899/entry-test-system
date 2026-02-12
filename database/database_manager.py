@@ -1,4 +1,3 @@
-import os
 import sqlite3
 import hashlib
 
@@ -33,7 +32,7 @@ class DatabaseManager:
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS questions (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    question TEXT,
+                    question TEXT UNIQUE,
                     opt1 TEXT, opt2 TEXT, opt3 TEXT, opt4 TEXT,
                     correct INTEGER
                 )
