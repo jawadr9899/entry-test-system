@@ -1,19 +1,23 @@
-import sqlite3
 import hashlib
+import sqlite3
+from os import path
 
 DB_NAME = ""
 
+
 class DatabaseManager:
     @staticmethod
-    def set_db_name(database_name:str="entry_test.db"):
+    def set_db_name(database_name: str = "entry_test.db"):
         global DB_NAME
-        DB_NAME = "database/sqlite/" + database_name 
-        
+        DB_NAME = "database/sqlite/" + database_name
+
     @staticmethod
-    def init_db(path:str=""):
+    def init_db(p: str = ""):
         global DB_NAME
         if len(DB_NAME) == 0:
-            DB_NAME = path
+            DB_NAME = p
+        if not path.exists(p):
+            DB_NAME = "default.db"
 
         with sqlite3.connect(DB_NAME) as conn:
             cur = conn.cursor()
@@ -47,13 +51,13 @@ class DatabaseManager:
             conn.commit()
 
     @staticmethod
-    def add_student(name, roll_no, email, cnic,password,pic_path):
+    def add_student(name, roll_no, email, cnic, password, pic_path):
         hashed = hashlib.sha256(password.encode()).hexdigest()
         with sqlite3.connect(DB_NAME) as conn:
             try:
                 conn.execute(
                     "INSERT INTO users (name, roll_no, email, cnic, password, pic_path) VALUES (?, ?, ?,?,?,?)",
-                    (name, roll_no, email,cnic, hashed, pic_path),
+                    (name, roll_no, email, cnic, hashed, pic_path),
                 )
             except sqlite3.IntegrityError:
                 print(f"Skipping duplicate: {roll_no}")
@@ -61,22 +65,25 @@ class DatabaseManager:
     @staticmethod
     def login_student(roll_no, password):
         hashed = hashlib.sha256(password.encode()).hexdigest()
-        
+
         with sqlite3.connect(DB_NAME) as conn:
             cur = conn.cursor()
-            
+
             cur.execute("SELECT password FROM users WHERE roll_no=?", (roll_no,))
             result = cur.fetchone()
-            
+
             if result is None:
                 return None, "Roll No not found in Database"
-            
+
             stored_password = result[0]
-            
+
             if stored_password != hashed:
                 return None, "Incorrect Password"
-                
-            cur.execute("SELECT id, name, roll_no,cnic,pic_path FROM users WHERE roll_no=?", (roll_no,))
+
+            cur.execute(
+                "SELECT id, name, roll_no,cnic,pic_path FROM users WHERE roll_no=?",
+                (roll_no,),
+            )
             user = cur.fetchone()
             return user, None
 
