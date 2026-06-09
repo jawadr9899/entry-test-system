@@ -10,7 +10,7 @@ from database.database_manager import DatabaseManager
 
 app = FastAPI()
 # configuration
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory="server/templates")
 makedirs("uploads", exist_ok=True)
 
 @app.get("/", response_class=HTMLResponse)
