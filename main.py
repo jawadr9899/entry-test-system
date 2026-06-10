@@ -2,7 +2,7 @@ import types
 import customtkinter as ctk
 from views import EntryTestApp
 from database.loader import load_data
-
+from os import getcwd
 #config
 config_dict = {
     "PER_QUESTION_TIME" : 5, # mins  
@@ -11,7 +11,7 @@ config_dict = {
     "FONT_HEADER" : ("Roboto Medium", 26),
     "FONT_BODY" : ("Roboto", 14),
     "FONT_BOLD" : ("Roboto", 14, "bold"),
-    "DB_NAME":"data.db"
+    "DB_NAME":f"{getcwd()}/data.db"
 }
 config = types.SimpleNamespace(**config_dict)
 
