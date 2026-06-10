@@ -28,6 +28,7 @@ class DatabaseManager:
                     roll_no TEXT UNIQUE,
                     email TEXT UNIQUE,
                     cnic TEXT UNIQUE,
+                    phone TEXT UNIQUE
                     password TEXT,
                     pic_path TEXT,
                     score INTEGER DEFAULT 0
@@ -51,13 +52,13 @@ class DatabaseManager:
             conn.commit()
 
     @staticmethod
-    def add_student(name, roll_no, email, cnic, password, pic_path):
+    def add_student(name, roll_no, email, cnic, phone, password, pic_path):
         hashed = hashlib.sha256(password.encode()).hexdigest()
         with sqlite3.connect(DB_NAME) as conn:
             try:
                 conn.execute(
-                    "INSERT INTO users (name, roll_no, email, cnic, password, pic_path) VALUES (?, ?, ?,?,?,?)",
-                    (name, roll_no, email, cnic, hashed, pic_path),
+                    "INSERT INTO users (name, roll_no, email, cnic,phone,  password, pic_path) VALUES (?, ?, ?,?,?,?, ?)",
+                    (name, roll_no, email, cnic,phone,  hashed, pic_path),
                 )
             except sqlite3.IntegrityError:
                 print(f"Skipping duplicate: {roll_no}")
