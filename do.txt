@@ -1,0 +1,506 @@
+import customtkinter as ctk
+from .login_view import LoginView
+from .test_view import TestView
+
+
+class EntryTestApp(ctk.CTk):
+    def __init__(self,config):
+        super().__init__()
+        self.config = config
+        self.title("University Entry Test System")
+        self.geometry(config.APP_SIZE)
+        
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+    
+        self.show_auth()
+
+    def show_auth(self):
+        self.clear_screen()
+        LoginView(self, self.start_app,self.config).grid(row=0, column=0, sticky="nsew")
+
+    def start_app(self, user_data):
+        self.clear_screen()
+        TestView(self, user_data, self.show_auth,self.config).grid(row=0, column=0, sticky="nsew")
+
+    def clear_screen(self):
+        for widget in self.winfo_children():
+            widget.destroy()
+import customtkinter as ctk
+from database.database_manager import DatabaseManager
+
+
+class LoginView(ctk.CTkFrame):
+    def __init__(self, master, on_login_success, config):
+        super().__init__(master, fg_color="transparent")
+        self.config = config
+        self.on_login_success = on_login_success
+        
+        # Grid Layout
+        self.grid_columnconfigure((0, 2), weight=1)
+        self.grid_columnconfigure(1, weight=2)
+        self.grid_rowconfigure((0, 2), weight=1)
+
+        # Login Card
+        self.card = ctk.CTkFrame(self, corner_radius=20)
+        self.card.grid(row=1, column=1, sticky="ew", padx=20)
+        self.card.grid_columnconfigure(0, weight=1)
+
+        # UI Components
+        ctk.CTkLabel(self.card, text="Student Login", font=self.config.FONT_HEADER).grid(row=0, column=0, pady=(40, 5))
+        ctk.CTkLabel(self.card, text="Enter your Roll No & Password", font=("Roboto", 12), text_color="gray").grid(row=1, column=0, pady=(0, 20))
+
+        self.error_frame = ctk.CTkFrame(self.card, fg_color="transparent", height=30)
+        self.error_frame.grid(row=2, column=0, sticky="ew")
+        
+        self.error_msg = ctk.CTkLabel(self.error_frame, text="", text_color="#FF5555", font=("Roboto", 14, "bold"))
+        self.error_msg.place(relx=0.5, rely=0.5, anchor="center") 
+
+
+        # Inputs
+        self.roll_entry = ctk.CTkEntry(self.card, placeholder_text="Roll No. (e.g., CS-2024-001)", height=50, font=self.config.FONT_BODY, corner_radius=12)
+        self.roll_entry.grid(row=3, column=0, padx=40, pady=(10, 10), sticky="ew")
+
+        self.pass_entry = ctk.CTkEntry(self.card, placeholder_text="Password", height=50, show="*", font=config.FONT_BODY, corner_radius=12)
+        self.pass_entry.grid(row=4, column=0, padx=40, pady=(10, 30), sticky="ew")
+
+        # Login Button
+        self.login_btn = ctk.CTkButton(self.card, text="Start Test", height=45, font=config.FONT_BOLD, corner_radius=12, command=self.handle_login)
+        self.login_btn.grid(row=5, column=0, padx=40, pady=(0, 40), sticky="ew")
+
+    def handle_login(self):
+        roll_no = self.roll_entry.get().strip()
+        password = self.pass_entry.get().strip()
+
+        if not roll_no or not password:
+            self.show_error("Both fields can't be empty")
+            return
+
+        user, error_msg = DatabaseManager.login_student(roll_no, password)
+        
+        if user:
+            self.on_login_success(user)
+        else:
+            self.show_error(error_msg)
+            
+            if "Password" in error_msg:
+                self.pass_entry.delete(0, 'end')
+
+    def show_error(self, msg):
+        self.error_msg.configure(text=msg)
+        if hasattr(self, 'error_timer'):
+            self.after_cancel(self.error_timer)
+        self.error_timer = self.after(3000, lambda: self.error_msg.configure(text=""))
+from PIL import Image
+import customtkinter as ctk
+from database.database_manager import DatabaseManager
+
+class TestView(ctk.CTkFrame):
+    def __init__(self, master, user_data, on_logout, config):
+        super().__init__(master, fg_color="transparent")
+        self.config = config
+        self.user_id, self.name, self.roll_no, self.cnic, self.pic_path = user_data
+        self.on_logout = on_logout
+        
+        # Database & Quiz State
+        self.questions = DatabaseManager.get_questions()
+        self.total_q = len(self.questions)
+        self.q_index = 0
+        self.score = 0
+        
+        # Timer Setup
+        self.time_left = config.PER_QUESTION_TIME * self.total_q * 60
+        self.timer_running = False
+        self.timer_event = None
+
+        # Layout Configuration
+        self.grid_columnconfigure(1, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+
+        self._build_sidebar()
+        self._build_main_content()
+        
+        if self.total_q > 0:
+            self.load_question()
+            self.start_timer()
+
+    def _build_sidebar(self):
+        self.sidebar = ctk.CTkFrame(self, width=250, corner_radius=0)
+        self.sidebar.grid(row=0, column=0, sticky="nsew")
+        self.sidebar.grid_columnconfigure(0, weight=1)
+        self.sidebar.grid_rowconfigure(6, weight=1) # Spacer row
+
+        # --- Student Profile Section ---
+        ctk.CTkLabel(self.sidebar, text="STUDENT PROFILE", font=("Roboto", 18, "bold"), text_color="gray").grid(row=0, column=0, sticky="w", padx=20, pady=(30, 15))
+        
+        # Profile Image
+        try:
+            img = Image.open(self.pic_path)
+            ctk_image = ctk.CTkImage(light_image=img, dark_image=img, size=(80, 80))
+            self.img_label = ctk.CTkLabel(self.sidebar, image=ctk_image, text="")
+            self.img_label.grid(row=1, column=0, padx=20, pady=(0, 15))
+        except Exception:
+            # Fallback if image fails
+            ctk.CTkLabel(self.sidebar, text="[No Image]", text_color="gray").grid(row=1, column=0, pady=10)
+
+        # Details
+        info_frame = ctk.CTkFrame(self.sidebar, fg_color="transparent")
+        info_frame.grid(row=2, column=0, sticky="ew", padx=20)
+        
+        ctk.CTkLabel(info_frame, text=f"Name:", font=("Roboto", 12, "bold"), text_color="gray").pack(anchor="w")
+        ctk.CTkLabel(info_frame, text=f"{self.name}", font=("Roboto", 14), wraplength=200, justify="left").pack(anchor="w", pady=(0, 10))
+        
+        ctk.CTkLabel(info_frame, text=f"Roll No:", font=("Roboto", 12, "bold"), text_color="gray").pack(anchor="w")
+        ctk.CTkLabel(info_frame, text=f"{self.roll_no}", font=("Roboto", 14)).pack(anchor="w", pady=(0, 10))
+
+        ctk.CTkLabel(info_frame, text=f"CNIC:", font=("Roboto", 12, "bold"), text_color="gray").pack(anchor="w")
+        ctk.CTkLabel(info_frame, text=f"{self.cnic}", font=("Roboto", 14)).pack(anchor="w")
+
+        # Separator
+        ctk.CTkFrame(self.sidebar, height=2, fg_color="gray60").grid(row=3, column=0, sticky="ew", padx=20, pady=20)
+
+        # --- Timer Section ---
+        ctk.CTkLabel(self.sidebar, text="TIME REMAINING", font=("Roboto", 12, "bold"), text_color="gray").grid(row=4, column=0, sticky="w", padx=20)
+        self.timer_lbl = ctk.CTkLabel(self.sidebar, text="00:00", font=("Roboto", 36, "bold"), text_color="#3B8ED0")
+        self.timer_lbl.grid(row=5, column=0, sticky="ew", padx=20, pady=(0, 10))
+
+        # Progress
+        self.progress_lbl = ctk.CTkLabel(self.sidebar, text="Q 1/10", font=("Roboto", 14))
+        self.progress_lbl.grid(row=7, column=0, sticky="ew", pady=(0, 10))
+        
+        # Quit Button
+        ctk.CTkButton(self.sidebar, text="Quit Test", fg_color="transparent", border_width=1, hover_color="#C0392B",
+                      text_color=("gray10", "gray90"), command=self.handle_quit).grid(row=8, column=0, sticky="ew", padx=20, pady=30)
+
+    def _build_main_content(self):
+        self.main_area = ctk.CTkFrame(self, fg_color="transparent")
+        self.main_area.grid(row=0, column=1, sticky="nsew", padx=30, pady=30)
+        self.main_area.grid_columnconfigure(0, weight=1)
+        self.main_area.grid_rowconfigure(0, weight=1)
+
+        # Question Card
+        self.q_card = ctk.CTkFrame(self.main_area, corner_radius=15, fg_color=("white", "gray20"))
+        self.q_card.grid(row=0, column=0, sticky="nsew")
+        self.q_card.grid_columnconfigure(0, weight=1)
+        self.q_card.grid_rowconfigure(1, weight=1)
+
+        # Question Text
+        self.q_text = ctk.CTkLabel(self.q_card, text="Loading...", font=self.config.FONT_HEADER, justify="left", anchor="w")
+        self.q_text.grid(row=0, column=0, sticky="ew", padx=40, pady=(40, 30))
+        # Bind event to dynamically wrap text
+        self.q_card.bind("<Configure>", lambda e: self.q_text.configure(wraplength=self.q_card.winfo_width() - 80))
+
+        # Options Container
+        self.opt_frame = ctk.CTkFrame(self.q_card, fg_color="transparent")
+        self.opt_frame.grid(row=1, column=0, sticky="nsew", padx=40)
+        
+        self.var_opt = ctk.IntVar(value=0)
+        self.radios = []
+        
+        for i in range(4):
+            rb = ctk.CTkRadioButton(self.opt_frame, text=f"Option {i}", variable=self.var_opt, value=i+1,
+                                    font=self.config.FONT_BODY, height=30, border_width_checked=6,
+                                    command=self.enable_next)
+            rb.grid(row=i, column=0, sticky="w", pady=12)
+            self.radios.append(rb)
+
+        # Next Button
+        self.next_btn = ctk.CTkButton(self.q_card, text="Next Question", font=self.config.FONT_BOLD, 
+                                      height=50, width=200, corner_radius=10, state="disabled", command=self.next_question)
+        self.next_btn.grid(row=2, column=0, sticky="e", padx=40, pady=40)
+
+    def load_question(self):
+        if self.q_index >= self.total_q:
+            self.finish_test()
+            return
+
+        q = self.questions[self.q_index]
+        self.progress_lbl.configure(text=f"Question {self.q_index + 1} / {self.total_q}")
+        self.q_text.configure(text=f"{self.q_index + 1}. {q[1]}")
+        
+        self.var_opt.set(0)
+        self.next_btn.configure(state="disabled")
+        
+        options = q[2:6]
+        for i, txt in enumerate(options):
+            if i < len(self.radios):
+                self.radios[i].configure(text=txt)
+
+    def enable_next(self):
+        self.next_btn.configure(state="normal")
+
+    def next_question(self):
+        # 1. Check Answer
+        correct_index = self.questions[self.q_index][6]
+        # var_opt is 1-based, correct_index is usually 0-based
+        if self.var_opt.get() - 1 == correct_index:
+            self.score += 1
+            
+        # 2. Increment
+        self.q_index += 1
+        
+        # 3. Load Next
+        self.load_question()
+
+    def start_timer(self):
+        self.timer_running = True
+        self.update_timer()
+
+    def update_timer(self):
+        if not self.timer_running:
+            return
+
+        if self.time_left > 0:
+            mins, secs = divmod(self.time_left, 60)
+            
+            # Color change warning
+            text_color = "#3B8ED0"
+            if self.time_left < 60:
+                 text_color = "#e74c3c"
+            
+            self.timer_lbl.configure(text=f"{int(mins):02}:{int(secs):02}", text_color=text_color)
+            self.time_left -= 1
+            self.timer_event = self.after(1000, self.update_timer)
+        else:
+            self.timer_lbl.configure(text="00:00", text_color="red")
+            self.finish_test()
+
+    def stop_timer(self):
+        self.timer_running = False
+        if self.timer_event:
+            self.after_cancel(self.timer_event)
+            self.timer_event = None
+
+    def handle_quit(self):
+        self.stop_timer()
+        self.on_logout()
+
+    def finish_test(self):
+        # CRITICAL: Stop the timer before destroying widgets or saving
+        self.stop_timer()
+        
+        DatabaseManager.save_score(self.user_id, self.score)
+        
+        # clear content
+        for w in self.main_area.winfo_children(): 
+            w.destroy()
+        
+        # Results Frame
+        res = ctk.CTkFrame(self.main_area, corner_radius=15, border_width=1, border_color="gray30", fg_color=("white", "gray20"))
+        res.place(relx=0.5, rely=0.5, anchor="center", relwidth=0.6, relheight=0.6)
+        
+        ctk.CTkLabel(res, text="Test Submitted Successfully", font=("Roboto", 24, "bold")).pack(pady=(50, 10))
+        
+        ctk.CTkLabel(res, text=f"{self.name}", font=("Roboto", 18)).pack()
+        ctk.CTkLabel(res, text=f"{self.roll_no}", font=("Roboto", 14), text_color="gray").pack(pady=(0, 20))
+        
+        # Score Logic
+        percentage = (self.score / self.total_q) * 100
+        score_col = "#2CC985" if percentage >= 50 else "#ff5555"
+        
+        ctk.CTkLabel(res, text="Your Score", font=("Roboto", 14, "bold"), text_color="gray").pack()
+        ctk.CTkLabel(res, text=f"{self.score} / {self.total_q}", font=("Roboto", 60, "bold"), text_color=score_col).pack(pady=10)
+        
+        ctk.CTkButton(res, text="Return to Home", height=45, width=200, font=("Roboto", 14, "bold"), 
+                      command=self.on_logout).pack(pady=(30, 40))import hashlib
+import sqlite3
+from os import path
+
+DB_NAME = ""
+
+
+class DatabaseManager:
+    @staticmethod
+    def set_db_name(database_name: str = "entry_test.db"):
+        global DB_NAME
+        DB_NAME = "database/sqlite/" + database_name
+
+    @staticmethod
+    def init_db(p: str = ""):
+        global DB_NAME
+        if len(DB_NAME) == 0:
+            DB_NAME = p
+        if not path.exists(p):
+            DB_NAME = "default.db"
+
+        with sqlite3.connect(DB_NAME) as conn:
+            cur = conn.cursor()
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS users (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT,
+                    roll_no TEXT UNIQUE,
+                    email TEXT UNIQUE,
+                    cnic TEXT UNIQUE,
+                    phone TEXT UNIQUE
+                    password TEXT,
+                    pic_path TEXT,
+                    score INTEGER DEFAULT 0
+                )
+            """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS questions (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    question TEXT UNIQUE,
+                    opt1 TEXT, opt2 TEXT, opt3 TEXT, opt4 TEXT,
+                    correct INTEGER
+                )
+            """)
+            conn.commit()
+
+    @staticmethod
+    def clear_data():
+        with sqlite3.connect(DB_NAME) as conn:
+            conn.execute("DELETE FROM users")
+            conn.execute("DELETE FROM questions")
+            conn.commit()
+
+    @staticmethod
+    def add_student(name, roll_no, email, cnic, phone, password, pic_path):
+        hashed = hashlib.sha256(password.encode()).hexdigest()
+        with sqlite3.connect(DB_NAME) as conn:
+            try:
+                conn.execute(
+                    "INSERT INTO users (name, roll_no, email, cnic,phone,  password, pic_path) VALUES (?, ?, ?,?,?,?, ?)",
+                    (name, roll_no, email, cnic,phone,  hashed, pic_path),
+                )
+            except sqlite3.IntegrityError:
+                print(f"Skipping duplicate: {roll_no}")
+
+    @staticmethod
+    def login_student(roll_no, password):
+        hashed = hashlib.sha256(password.encode()).hexdigest()
+
+        with sqlite3.connect(DB_NAME) as conn:
+            cur = conn.cursor()
+
+            cur.execute("SELECT password FROM users WHERE roll_no=?", (roll_no,))
+            result = cur.fetchone()
+
+            if result is None:
+                return None, "Roll No not found in Database"
+
+            stored_password = result[0]
+
+            if stored_password != hashed:
+                return None, "Incorrect Password"
+
+            cur.execute(
+                "SELECT id, name, roll_no,cnic,pic_path FROM users WHERE roll_no=?",
+                (roll_no,),
+            )
+            user = cur.fetchone()
+            return user, None
+
+    @staticmethod
+    def add_question(q, opts, correct):
+        with sqlite3.connect(DB_NAME) as conn:
+            conn.execute(
+                "INSERT INTO questions (question, opt1, opt2, opt3, opt4, correct) VALUES (?,?,?,?,?,?)",
+                (q, opts[0], opts[1], opts[2], opts[3], correct),
+            )
+            conn.commit()
+
+    @staticmethod
+    def get_questions():
+        with sqlite3.connect(DB_NAME) as conn:
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM questions")
+            return cur.fetchall()
+
+    @staticmethod
+    def save_score(user_id, score):
+        with sqlite3.connect(DB_NAME) as conn:
+            conn.execute("UPDATE users SET score=? WHERE id=?", (score, user_id))
+            conn.commit()
+import sqlite3
+import json
+import os
+from .database_manager import DatabaseManager
+
+def load_data(database_name:str):
+    DatabaseManager.set_db_name(database_name)
+    DatabaseManager.init_db()
+    print("Database initialization successful!")    
+    # load questions
+    if os.path.exists("json/questions.json"):
+        with open("json/questions.json", "r") as f:
+            q_data = json.load(f)
+            for q in q_data:
+                try:
+                  DatabaseManager.add_question(q["question"], q["options"], q["correct_index"])  
+                except sqlite3.IntegrityError:
+                    continue 
+        print(f"Loaded {len(q_data)} questions.")
+    else:
+        print("Warning: questions.json not found.")
+
+ 
+import types
+import customtkinter as ctk
+from views import EntryTestApp
+from database.loader import load_data
+
+#config
+config_dict = {
+    "PER_QUESTION_TIME" : 5, # mins  
+    "APP_SIZE" : "900x600",
+    "THEME_COLOR" : "dark-blue",
+    "FONT_HEADER" : ("Roboto Medium", 26),
+    "FONT_BODY" : ("Roboto", 14),
+    "FONT_BOLD" : ("Roboto", 14, "bold"),
+    "DB_NAME":"data.db"
+}
+config = types.SimpleNamespace(**config_dict)
+
+ctk.set_appearance_mode("light")
+ctk.set_default_color_theme(config.THEME_COLOR)
+
+if __name__ == "__main__":
+    load_data(config.DB_NAME)
+    app = EntryTestApp(config)
+    app.mainloop()
+from os import getcwd, path, mkdir
+from main import config
+from datetime import datetime
+from shutil import copyfileobj
+from os import makedirs
+from fastapi import FastAPI, Request, Form, File, UploadFile
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
+from database.database_manager import DatabaseManager
+
+app = FastAPI()
+# configuration
+templates = Jinja2Templates(directory="server/templates")
+makedirs("uploads", exist_ok=True)
+
+@app.get("/", response_class=HTMLResponse)
+async def root(req: Request):
+    return templates.TemplateResponse("index.html", {"request": req})
+
+
+@app.post("/signup", response_class=HTMLResponse)
+async def signup(
+    name: str = Form(...),
+    email: str = Form(...),
+    phone: str = Form(...),
+    password: str = Form(...),
+    cnic: str = Form(...),
+    picture: UploadFile = File(...),
+):
+    # save pics
+    if not path.exists("uploads"):
+        mkdir("uploads")
+    pic_path =  f"{getcwd()}/uploads/{picture.filename}"
+    with open(pic_path, "wb") as buf:
+        copyfileobj(picture.file, buf)
+
+    # generate roll_no
+    roll_no = f"{name.split(" ")[0]}-{datetime.today().year}-{str(datetime.today().microsecond)[:-4]}"
+
+    #init db
+    DatabaseManager.init_db(f"{getcwd()}/{config.DB_NAME}")
+    DatabaseManager.add_student(name, roll_no, email, cnic,phone, password, pic_path)
+
+    return f"<h1>Thank You! {name}</h1> <br> <h1>Your Roll No: {roll_no}</h1>"

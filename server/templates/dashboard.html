@@ -3,112 +3,481 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CS160 Admin Analytics Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <title>CS160 — Entrance Assessment</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #FAFAFA; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --w-50:  #FDFBF4;
+            --w-100: #F7EED8;
+            --w-200: #EFE2BF;
+            --w-300: #E2CFA4;
+            --w-400: #CEBB88;
+            --b-900: #0D0D0A;
+            --b-800: #1C1C17;
+            --b-700: #2E2E27;
+            --b-600: #484840;
+            --b-500: #69695F;
+            --b-400: #8C8C80;
+            --b-300: #B8B8AC;
+            --border:      2px solid var(--b-900);
+            --border-thin: 1px solid var(--w-300);
+            --shadow:      4px 4px 0px var(--b-900);
+            --shadow-lg:   6px 6px 0px var(--b-900);
+        }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, sans-serif;
+            background: var(--w-100);
+            color: var(--b-900);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ━━━━━━ HEADER ━━━━━━ */
+        .site-header {
+            background: var(--b-900);
+            padding: 30px 56px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header-eyebrow {
+            font-size: 9.5px;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--b-400);
+            font-weight: 500;
+            margin-bottom: 9px;
+        }
+
+        .header-title {
+            font-size: 23px;
+            font-weight: 600;
+            color: var(--w-50);
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+        }
+
+        .header-meta { text-align: right; }
+
+        .header-meta-label {
+            font-size: 9px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--b-500);
+            margin-bottom: 5px;
+        }
+
+        .header-meta-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--w-300);
+        }
+
+        /* ━━━━━━ TICKER STRIP ━━━━━━ */
+        .ticker-strip {
+            background: var(--w-400);
+            border-bottom: var(--border);
+            padding: 9px 56px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .ticker-dot {
+            width: 5px;
+            height: 5px;
+            background: var(--b-900);
+            border-radius: 50%;
+        }
+
+        .ticker-text {
+            font-family: 'DM Mono', monospace;
+            font-size: 10.5px;
+            color: var(--b-800);
+            letter-spacing: 0.04em;
+        }
+
+        /* ━━━━━━ MAIN ━━━━━━ */
+        .main-content {
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 52px 56px;
+            display: flex;
+            flex-direction: column;
+            gap: 48px;
+        }
+
+        /* ━━━━━━ STATS ━━━━━━ */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+        }
+
+        .stat-card {
+            background: var(--w-50);
+            border: var(--border);
+            box-shadow: var(--shadow);
+            padding: 26px 22px 22px;
+            position: relative;
+            transition: transform 0.12s ease, box-shadow 0.12s ease;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Solid top bar per card — structural accent */
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 3px;
+            background: var(--b-900);
+        }
+
+        .stat-label {
+            font-size: 9.5px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--b-500);
+            font-weight: 600;
+            margin-bottom: 14px;
+            display: block;
+        }
+
+        .stat-value {
+            font-family: 'DM Mono', monospace;
+            font-size: 44px;
+            font-weight: 400;
+            color: var(--b-900);
+            line-height: 1;
+            letter-spacing: -0.025em;
+        }
+
+        /* ━━━━━━ SECTION LABEL ━━━━━━ */
+        .section-label {
+            font-size: 9.5px;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            color: var(--b-600);
+            font-weight: 600;
+        }
+
+        /* ━━━━━━ CONTENT GRID ━━━━━━ */
+        .content-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 2.3fr);
+            gap: 22px;
+            align-items: start;
+        }
+
+        /* ━━━━━━ PANEL ━━━━━━ */
+        .panel {
+            background: var(--w-50);
+            border: var(--border);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            background: var(--w-200);
+            padding: 15px 22px;
+            border-bottom: var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* ━━━━━━ MERIT LIST ━━━━━━ */
+        .merit-list { padding: 4px 0 8px; }
+
+        .merit-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 13px 22px;
+            border-bottom: var(--border-thin);
+            transition: background 0.1s;
+        }
+
+        .merit-item:last-child { border-bottom: none; }
+        .merit-item:hover { background: var(--w-100); }
+
+        .merit-rank {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            color: var(--b-300);
+            width: 16px;
+            flex-shrink: 0;
+            font-style: italic;
+        }
+
+        .merit-info { flex: 1; min-width: 0; }
+
+        .merit-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--b-800);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .merit-roll {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            color: var(--b-400);
+            margin-top: 3px;
+        }
+
+        .merit-score-badge {
+            font-family: 'DM Mono', monospace;
+            font-size: 11.5px;
+            font-weight: 500;
+            background: var(--b-900);
+            color: var(--w-100);
+            padding: 5px 11px;
+            flex-shrink: 0;
+            letter-spacing: 0.05em;
+        }
+
+        /* ━━━━━━ TABLE ━━━━━━ */
+        .table-wrap { overflow-x: auto; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--w-200);
+            border-bottom: var(--border);
+        }
+
+        th {
+            padding: 13px 20px;
+            font-size: 9px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--b-500);
+            font-weight: 600;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        th.center { text-align: center; }
+
+        tbody tr {
+            border-bottom: var(--border-thin);
+            transition: background 0.1s;
+        }
+
+        tbody tr:nth-child(even) { background: rgba(224, 207, 164, 0.22); }
+        tbody tr:hover { background: var(--w-200); }
+        tbody tr:last-child { border-bottom: none; }
+
+        td {
+            padding: 14px 20px;
+            vertical-align: middle;
+        }
+
+        .td-roll {
+            font-family: 'DM Mono', monospace;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--b-900);
+            white-space: nowrap;
+        }
+
+        .td-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--b-900);
+        }
+
+        .td-cnic {
+            font-family: 'DM Mono', monospace;
+            font-size: 10.5px;
+            color: var(--b-400);
+            margin-top: 3px;
+        }
+
+        .td-email {
+            font-size: 12px;
+            color: var(--b-600);
+        }
+
+        .td-phone {
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            color: var(--b-400);
+            margin-top: 3px;
+        }
+
+        .score-chip {
+            font-family: 'DM Mono', monospace;
+            font-size: 12px;
+            font-weight: 500;
+            padding: 4px 14px;
+            display: inline-block;
+            border: var(--border);
+            min-width: 52px;
+            text-align: center;
+        }
+
+        .score-chip.high {
+            background: var(--b-900);
+            color: var(--w-100);
+        }
+
+        .score-chip.low {
+            background: transparent;
+            color: var(--b-600);
+        }
+
+        .td-score { text-align: center; }
+
+        /* ━━━━━━ EMPTY STATE ━━━━━━ */
+        .empty-state {
+            padding: 44px 24px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--b-400);
+            font-style: italic;
+        }
+
+        /* ━━━━━━ RESPONSIVE ━━━━━━ */
+        @media (max-width: 1100px) {
+            .content-grid { grid-template-columns: 1fr; }
+            .stats-grid   { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 680px) {
+            .site-header  { padding: 22px 24px; flex-direction: column; gap: 18px; align-items: flex-start; }
+            .ticker-strip { padding: 9px 24px; }
+            .main-content { padding: 32px 24px; gap: 36px; }
+            .stats-grid   { grid-template-columns: 1fr 1fr; gap: 14px; }
+            .stat-value   { font-size: 34px; }
+            .header-meta  { text-align: left; }
+        }
     </style>
 </head>
-<body class="text-neutral-800 antialiased">
+<body>
 
-    <header class="border-b border-neutral-200 bg-white px-8 py-5">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div>
-                <span class="text-xs tracking-widest text-neutral-400 font-semibold uppercase">Course: CS160 Database Systems</span> [cite: 3]
-                <h1 class="text-xl font-medium tracking-tight text-neutral-900">Entrance Assessment Dashboard</h1>
-            </div>
-            <div class="text-right">
-                <span class="text-xs text-neutral-400 block">Instructor</span>
-                <span class="text-sm font-medium text-neutral-600">Ms. Saima Yasmeen</span> [cite: 3]
-            </div>
+    <header class="site-header">
+        <div>
+            <p class="header-eyebrow">Course — CS160 Database Systems</p>
+            <h1 class="header-title">Entrance Assessment Dashboard</h1>
+        </div>
+        <div class="header-meta">
+            <p class="header-meta-label">Instructor</p>
+            <p class="header-meta-name">Ms. Saima Yasmeen</p>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-8 py-10 space-y-12">
-        
-        <section class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div class="bg-white border border-neutral-200 rounded-xl p-6 shadow-sm">
-                <p class="text-xs font-semibold tracking-wider text-neutral-400 uppercase">Enrolled Applicants</p>
-                <p class="text-3xl font-light mt-2 text-neutral-900">{{ stats.total_candidates }}</p>
+    <div class="ticker-strip">
+        <span class="ticker-dot"></span>
+        <span class="ticker-text">Semester Entrance · Cohort Overview · Read-Only View</span>
+    </div>
+
+    <main class="main-content">
+
+        <!-- ── Stats ── -->
+        <section class="stats-grid" aria-label="Summary statistics">
+            <div class="stat-card">
+                <span class="stat-label">Enrolled Applicants</span>
+                <p class="stat-value">{{ stats.total_candidates }}</p>
             </div>
-            <div class="bg-white border border-neutral-200 rounded-xl p-6 shadow-sm">
-                <p class="text-xs font-semibold tracking-wider text-neutral-400 uppercase">Cohort Mean Score</p>
-                <p class="text-3xl font-light mt-2 text-blue-600">{{ stats.avg_score }}</p>
+            <div class="stat-card">
+                <span class="stat-label">Cohort Mean Score</span>
+                <p class="stat-value">{{ stats.avg_score }}</p>
             </div>
-            <div class="bg-white border border-neutral-200 rounded-xl p-6 shadow-sm">
-                <p class="text-xs font-semibold tracking-wider text-neutral-400 uppercase">Highest Marks Achieved</p>
-                <p class="text-3xl font-light mt-2 text-emerald-600">{{ stats.max_score }}</p>
+            <div class="stat-card">
+                <span class="stat-label">Highest Marks</span>
+                <p class="stat-value">{{ stats.max_score }}</p>
             </div>
-            <div class="bg-white border border-neutral-200 rounded-xl p-6 shadow-sm">
-                <p class="text-xs font-semibold tracking-wider text-neutral-400 uppercase">Lowest Marks Minimum</p>
-                <p class="text-3xl font-light mt-2 text-amber-600">{{ stats.min_score }}</p>
+            <div class="stat-card">
+                <span class="stat-label">Minimum Marks</span>
+                <p class="stat-value">{{ stats.min_score }}</p>
             </div>
         </section>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            <section class="lg:col-span-1 bg-white border border-neutral-200 rounded-xl p-6 shadow-sm h-fit">
-                <h2 class="text-sm font-semibold tracking-wider text-neutral-400 uppercase mb-4">Top Performing Candidates</h2>
-                <div class="divide-y divide-neutral-100">
+        <!-- ── Content Grid ── -->
+        <div class="content-grid">
+
+            <!-- Merit List -->
+            <section class="panel" aria-label="Top performing candidates">
+                <div class="panel-header">
+                    <span class="section-label">Top Performers</span>
+                </div>
+                <div class="merit-list">
                     {% for student in merit_list %}
-                    <div class="py-3 flex justify-between items-center first:pt-0 last:pb-0">
-                        <div>
-                            <p class="text-sm font-medium text-neutral-900">{{ student.name }}</p>
-                            <p class="text-xs text-neutral-400">{{ student.roll_no }}</p>
+                    <div class="merit-item">
+                        <span class="merit-rank">{{ loop.index }}</span>
+                        <div class="merit-info">
+                            <p class="merit-name">{{ student.name }}</p>
+                            <p class="merit-roll">{{ student.roll_no }}</p>
                         </div>
-                        <span class="bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full border border-emerald-100">
-                            {{ student.score }} pts
-                        </span>
+                        <span class="merit-score-badge">{{ student.score }}</span>
                     </div>
                     {% else %}
-                    <p class="text-sm text-neutral-400 py-2">No applicant testing analytics found.</p>
+                    <p class="empty-state">No performer data available.</p>
                     {% endfor %}
                 </div>
             </section>
 
-            <section class="lg:col-span-2 bg-white border border-neutral-200 rounded-xl shadow-sm overflow-hidden">
-                <div class="p-6 border-b border-neutral-100">
-                    <h2 class="text-sm font-semibold tracking-wider text-neutral-400 uppercase">Global Student Registration Directory</h2>
+            <!-- Roster Table -->
+            <section class="panel" aria-label="Student registration directory">
+                <div class="panel-header">
+                    <span class="section-label">Student Registration Directory</span>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+                <div class="table-wrap">
+                    <table>
                         <thead>
-                            <tr class="bg-neutral-50 border-b border-neutral-200 text-xs font-semibold tracking-wider text-neutral-400 uppercase">
-                                <th class="px-6 py-3.5">Roll No</th>
-                                <th class="px-6 py-3.5">Name</th>
-                                <th class="px-6 py-3.5">Contact Mapping</th>
-                                <th class="px-6 py-3.5 text-center">Score Metric</th>
+                            <tr>
+                                <th>Roll No</th>
+                                <th>Name</th>
+                                <th>Contact</th>
+                                <th class="center">Score</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-neutral-100 text-sm">
+                        <tbody>
                             {% for row in roster %}
-                            <tr class="hover:bg-neutral-50/50 transition-colors">
-                                <td class="px-6 py-4 font-medium text-neutral-900">{{ row.roll_no }}</td>
-                                <td class="px-6 py-4 text-neutral-600">
-                                    <div class="font-medium text-neutral-800">{{ row.name }}</div>
-                                    <div class="text-xs text-neutral-400">CNIC: {{ row.cnic }}</div>
+                            <tr>
+                                <td><span class="td-roll">{{ row.roll_no }}</span></td>
+                                <td>
+                                    <p class="td-name">{{ row.name }}</p>
+                                    <p class="td-cnic">{{ row.cnic }}</p>
                                 </td>
-                                <td class="px-6 py-4 text-xs text-neutral-500 space-y-0.5">
-                                    <div class="block">{{ row.email }}</div>
-                                    <div class="block text-neutral-400">{{ row.phone }}</div>
+                                <td>
+                                    <p class="td-email">{{ row.email }}</p>
+                                    <p class="td-phone">{{ row.phone }}</p>
                                 </td>
-                                <td class="px-6 py-4 text-center">
-                                    <span class="inline-block text-xs font-medium px-3 py-1 rounded-md {% if row.score >= 4 %}bg-blue-50 text-blue-700 border border-blue-100{% else %}bg-neutral-100 text-neutral-600 border border-neutral-200{% endif %}">
+                                <td class="td-score">
+                                    <span class="score-chip {% if row.score >= 4 %}high{% else %}low{% endif %}">
                                         {{ row.score }}
                                     </span>
                                 </td>
                             </tr>
                             {% else %}
                             <tr>
-                                <td colspan="4" class="px-6 py-8 text-center text-neutral-400 italic">No registered user data tables initialized.</td>
+                                <td colspan="4" class="empty-state">No student records found.</td>
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
             </section>
+
         </div>
     </main>
+
 </body>
 </html>
