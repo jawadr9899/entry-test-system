@@ -1,26 +1,25 @@
 import hashlib
 import sqlite3
-from os import path
+from os import makedirs, path
 
 DB_NAME = ""
 
 
 class DatabaseManager:
     @staticmethod
-    def set_db_name(database_name: str = "entry_test.db"):
-        global DB_NAME
-        DB_NAME = "database/sqlite/" + database_name
-
-    @staticmethod
     def init_db(p: str = ""):
         global DB_NAME
-        if len(DB_NAME) == 0:
+        print(p)
+        if p:
             DB_NAME = p
-        if not path.exists(p):
-            DB_NAME = "default.db"
+
+        parent_dir = path.dirname(DB_NAME)
+        if parent_dir and not path.exists(parent_dir):
+            makedirs(parent_dir, exist_ok=True)
 
         with sqlite3.connect(DB_NAME) as conn:
             cur = conn.cursor()
+
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -28,12 +27,13 @@ class DatabaseManager:
                     roll_no TEXT UNIQUE,
                     email TEXT UNIQUE,
                     cnic TEXT UNIQUE,
-                    phone TEXT UNIQUE
+                    phone TEXT UNIQUE,
                     password TEXT,
                     pic_path TEXT,
                     score INTEGER DEFAULT 0
                 )
             """)
+
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS questions (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -57,32 +57,32 @@ class DatabaseManager:
         with sqlite3.connect(DB_NAME) as conn:
             try:
                 conn.execute(
-                    "INSERT INTO users (name, roll_no, email, cnic,phone,  password, pic_path) VALUES (?, ?, ?,?,?,?, ?)",
-                    (name, roll_no, email, cnic,phone,  hashed, pic_path),
+                    "INSERT INTO users (name, roll_no, email, cnic, phone, password, pic_path) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                    (name, roll_no, email, cnic, phone, hashed, pic_path),
                 )
+                conn.commit()
             except sqlite3.IntegrityError:
-                print(f"Skipping duplicate: {roll_no}")
+                print(f"Skipping duplicate student: {roll_no}")
 
     @staticmethod
-    def login_student(roll_no, password):
+    def login_student(roll_no: str, password: str):
         hashed = hashlib.sha256(password.encode()).hexdigest()
-
         with sqlite3.connect(DB_NAME) as conn:
             cur = conn.cursor()
-
-            cur.execute("SELECT password FROM users WHERE roll_no=?", (roll_no,))
+            cur.execute(
+                "SELECT password FROM users WHERE roll_no = ?", (roll_no.strip(),)
+            )
             result = cur.fetchone()
 
             if result is None:
                 return None, "Roll No not found in Database"
 
             stored_password = result[0]
-
             if stored_password != hashed:
                 return None, "Incorrect Password"
 
             cur.execute(
-                "SELECT id, name, roll_no,cnic,pic_path FROM users WHERE roll_no=?",
+                "SELECT id, name, roll_no, cnic, pic_path FROM users WHERE roll_no=?",
                 (roll_no,),
             )
             user = cur.fetchone()
