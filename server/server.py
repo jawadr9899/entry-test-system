@@ -39,9 +39,8 @@ async def signup(
     # generate roll_no
     roll_no = f"{name.split(" ")[0]}-{datetime.today().year}-{str(datetime.today().microsecond)[:-4]}"
 
-    #init db
-    # DatabaseManager.set_db_name(config.DB_NAME)
-    DatabaseManager.init_db()
+    #init db)
+    DatabaseManager.init_db(config.DB_NAME)
     DatabaseManager.add_student(name, roll_no, email, cnic,phone, password, pic_path)
 
     return f"<h1>Thank You! {name}</h1> <br> <h1>Your Roll No: {roll_no}</h1>"

@@ -9,10 +9,8 @@ class DatabaseManager:
     @staticmethod
     def init_db(p: str = ""):
         global DB_NAME
-        print(p)
         if p:
             DB_NAME = p
-
         parent_dir = path.dirname(DB_NAME)
         if parent_dir and not path.exists(parent_dir):
             makedirs(parent_dir, exist_ok=True)
