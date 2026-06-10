@@ -1,4 +1,4 @@
-import os
+from os import getcwd, path, mkdir
 from main import config
 from datetime import datetime
 from shutil import copyfileobj
@@ -28,7 +28,9 @@ async def signup(
     picture: UploadFile = File(...),
 ):
     # save pics
-    pic_path =  f"{os.getcwd()}/uploads/{picture.filename}"
+    if not path.exists("uploads"):
+        mkdir("uploads")
+    pic_path =  f"{getcwd()}/uploads/{picture.filename}"
     with open(pic_path, "wb") as buf:
         copyfileobj(picture.file, buf)
 
@@ -36,7 +38,7 @@ async def signup(
     roll_no = f"{name.split(" ")[0]}-{datetime.today().year}-{str(datetime.today().microsecond)[:-4]}"
 
     #init db
-    DatabaseManager.init_db(f"../database/sqlite/{config.DB_NAME}")
-    DatabaseManager.add_student(name, roll_no, email, cnic, password, pic_path)
+    DatabaseManager.init_db(f"{getcwd()}/{config.DB_NAME}")
+    DatabaseManager.add_student(name, roll_no, email, cnic,phone, password, pic_path)
 
     return f"<h1>Thank You! {name}</h1> <br> <h1>Your Roll No: {roll_no}</h1>"
