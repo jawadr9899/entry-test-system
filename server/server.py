@@ -3,11 +3,10 @@ from main import config
 from datetime import datetime
 from shutil import copyfileobj
 from os import makedirs
-from fastapi import FastAPI, Request, Form, File, UploadFile
+from fastapi import FastAPI, Request, Form, File, UploadFile, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from database.database_manager import DatabaseManager
-from fastapi.responses import HTMLResponse
 from database.stats import UserStatsManager
 
 app = FastAPI()
@@ -66,4 +65,16 @@ async def admin_dashboard(request: Request):
             "merit_list": merit_list,
             "roster": student_roster
         }
+    )
+
+# ── Add this route alongside admin_dashboard ─────────────────────────────────
+@app.get("/admin/student/{student_id}", response_class=HTMLResponse)
+async def student_detail(request: Request, student_id: int):
+    db_file_path = f"{getcwd()}/data.db"
+    student = UserStatsManager.get_student_by_id(db_file_path, student_id)
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+    return templates.TemplateResponse(
+        "student_detail.html",
+        {"request": request, "student": student}
     )

@@ -1,457 +1,450 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CS160 — Entrance Assessment</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-    <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CS160 — Entrance Assessment</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+            :root {
+                --w-50: #fdfbf4;
+                --w-100: #f7eed8;
+                --w-200: #efe2bf;
+                --w-300: #e2cfa4;
+                --w-400: #cebb88;
+                --b-900: #0d0d0a;
+                --b-800: #1c1c17;
+                --b-700: #2e2e27;
+                --b-600: #484840;
+                --b-500: #69695f;
+                --b-400: #8c8c80;
+                --b-300: #b8b8ac;
+                --border: 2px solid var(--b-900);
+                --border-thin: 1px solid var(--w-300);
+                --shadow: 4px 4px 0px var(--b-900);
+                --shadow-lg: 6px 6px 0px var(--b-900);
+            }
+            body {
+                font-family:
+                    "Space Grotesk",
+                    -apple-system,
+                    sans-serif;
+                background: var(--w-100);
+                color: var(--b-900);
+                min-height: 100vh;
+                -webkit-font-smoothing: antialiased;
+            }
 
-        :root {
-            --w-50:  #FDFBF4;
-            --w-100: #F7EED8;
-            --w-200: #EFE2BF;
-            --w-300: #E2CFA4;
-            --w-400: #CEBB88;
-            --b-900: #0D0D0A;
-            --b-800: #1C1C17;
-            --b-700: #2E2E27;
-            --b-600: #484840;
-            --b-500: #69695F;
-            --b-400: #8C8C80;
-            --b-300: #B8B8AC;
-            --border:      2px solid var(--b-900);
-            --border-thin: 1px solid var(--w-300);
-            --shadow:      4px 4px 0px var(--b-900);
-            --shadow-lg:   6px 6px 0px var(--b-900);
-        }
+            .site-header {
+                background: var(--b-900);
+                padding: 30px 56px;
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-end;
+            }
+            .header-eyebrow {
+                font-size: 9.5px;
+                letter-spacing: 0.28em;
+                text-transform: uppercase;
+                color: var(--b-400);
+                font-weight: 500;
+                margin-bottom: 9px;
+            }
+            .header-title {
+                font-size: 23px;
+                font-weight: 600;
+                color: var(--w-50);
+                letter-spacing: -0.03em;
+                line-height: 1.15;
+            }
+            .header-meta {
+                text-align: right;
+            }
+            .header-meta-label {
+                font-size: 9px;
+                letter-spacing: 0.22em;
+                text-transform: uppercase;
+                color: var(--b-500);
+                margin-bottom: 5px;
+            }
+            .header-meta-name {
+                font-size: 14px;
+                font-weight: 500;
+                color: var(--w-300);
+            }
 
-        body {
-            font-family: 'Space Grotesk', -apple-system, sans-serif;
-            background: var(--w-100);
-            color: var(--b-900);
-            min-height: 100vh;
-            -webkit-font-smoothing: antialiased;
-        }
+            .ticker-strip {
+                background: var(--w-400);
+                border-bottom: var(--border);
+                padding: 9px 56px;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+            .ticker-dot {
+                width: 5px;
+                height: 5px;
+                background: var(--b-900);
+                border-radius: 50%;
+            }
+            .ticker-text {
+                font-family: "DM Mono", monospace;
+                font-size: 10.5px;
+                color: var(--b-800);
+                letter-spacing: 0.04em;
+            }
 
-        /* ━━━━━━ HEADER ━━━━━━ */
-        .site-header {
-            background: var(--b-900);
-            padding: 30px 56px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
+            .main-content {
+                max-width: 1360px;
+                margin: 0 auto;
+                padding: 52px 56px;
+                display: flex;
+                flex-direction: column;
+                gap: 36px;
+            }
 
-        .header-eyebrow {
-            font-size: 9.5px;
-            letter-spacing: 0.28em;
-            text-transform: uppercase;
-            color: var(--b-400);
-            font-weight: 500;
-            margin-bottom: 9px;
-        }
+            /* Stats */
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 18px;
+            }
+            .stat-card {
+                background: var(--w-50);
+                border: var(--border);
+                box-shadow: var(--shadow);
+                padding: 26px 22px 22px;
+                position: relative;
+                transition:
+                    transform 0.12s,
+                    box-shadow 0.12s;
+                overflow: hidden;
+            }
+            .stat-card:hover {
+                transform: translate(-2px, -2px);
+                box-shadow: var(--shadow-lg);
+            }
+            .stat-card::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 3px;
+                background: var(--b-900);
+            }
+            .stat-label {
+                font-size: 9.5px;
+                letter-spacing: 0.22em;
+                text-transform: uppercase;
+                color: var(--b-500);
+                font-weight: 600;
+                margin-bottom: 14px;
+                display: block;
+            }
+            .stat-value {
+                font-family: "DM Mono", monospace;
+                font-size: 44px;
+                color: var(--b-900);
+                line-height: 1;
+                letter-spacing: -0.025em;
+            }
 
-        .header-title {
-            font-size: 23px;
-            font-weight: 600;
-            color: var(--w-50);
-            letter-spacing: -0.03em;
-            line-height: 1.15;
-        }
+            /* Panel */
+            .panel {
+                background: var(--w-50);
+                border: var(--border);
+                box-shadow: var(--shadow);
+                overflow: hidden;
+            }
+            .panel-header {
+                background: var(--w-200);
+                padding: 15px 22px;
+                border-bottom: var(--border);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .section-label {
+                font-size: 9.5px;
+                letter-spacing: 0.24em;
+                text-transform: uppercase;
+                color: var(--b-600);
+                font-weight: 600;
+            }
 
-        .header-meta { text-align: right; }
+            /* Table */
+            .table-wrap {
+                overflow-x: auto;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            thead {
+                background: var(--w-200);
+                border-bottom: var(--border);
+            }
+            th {
+                padding: 13px 20px;
+                font-size: 9px;
+                letter-spacing: 0.22em;
+                text-transform: uppercase;
+                color: var(--b-500);
+                font-weight: 600;
+                text-align: left;
+                white-space: nowrap;
+            }
+            th.center {
+                text-align: center;
+            }
+            tbody tr {
+                border-bottom: var(--border-thin);
+                transition: background 0.1s;
+                cursor: pointer;
+            }
+            tbody tr:nth-child(even) {
+                background: rgba(224, 207, 164, 0.22);
+            }
+            tbody tr:hover {
+                background: var(--w-300) !important;
+            }
+            tbody tr:last-child {
+                border-bottom: none;
+            }
+            td {
+                padding: 14px 20px;
+                vertical-align: middle;
+            }
+            .td-roll {
+                font-family: "DM Mono", monospace;
+                font-size: 12px;
+                font-weight: 500;
+                color: var(--b-900);
+                white-space: nowrap;
+            }
+            .td-name {
+                font-size: 13px;
+                font-weight: 500;
+                color: var(--b-900);
+            }
+            .td-cnic {
+                font-family: "DM Mono", monospace;
+                font-size: 10.5px;
+                color: var(--b-400);
+                margin-top: 3px;
+            }
+            .td-email {
+                font-size: 12px;
+                color: var(--b-600);
+            }
+            .td-phone {
+                font-family: "DM Mono", monospace;
+                font-size: 11px;
+                color: var(--b-400);
+                margin-top: 3px;
+            }
+            .td-score {
+                text-align: center;
+            }
+            .score-chip {
+                font-family: "DM Mono", monospace;
+                font-size: 12px;
+                font-weight: 500;
+                padding: 4px 14px;
+                display: inline-block;
+                border: var(--border);
+                min-width: 52px;
+                text-align: center;
+            }
+            .score-chip.high {
+                background: var(--b-900);
+                color: var(--w-100);
+            }
+            .score-chip.low {
+                background: transparent;
+                color: var(--b-600);
+            }
 
-        .header-meta-label {
-            font-size: 9px;
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
-            color: var(--b-500);
-            margin-bottom: 5px;
-        }
+            /* Pagination */
+            .pagination {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 14px 22px;
+                border-top: var(--border);
+                background: var(--w-100);
+            }
+            .page-info {
+                font-family: "DM Mono", monospace;
+                font-size: 11px;
+                color: var(--b-500);
+            }
+            .page-controls {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .page-btn {
+                font-family: "DM Mono", monospace;
+                font-size: 11px;
+                font-weight: 500;
+                padding: 7px 16px;
+                background: var(--w-50);
+                border: var(--border);
+                cursor: pointer;
+                transition: all 0.12s;
+                box-shadow: 2px 2px 0 var(--b-900);
+            }
+            .page-btn:hover:not(:disabled) {
+                background: var(--b-900);
+                color: var(--w-100);
+                transform: translate(-1px, -1px);
+                box-shadow: 3px 3px 0 var(--b-500);
+            }
+            .page-btn:disabled {
+                opacity: 0.35;
+                cursor: not-allowed;
+                box-shadow: none;
+            }
+            .page-btn.active {
+                background: var(--b-900);
+                color: var(--w-100);
+            }
+            .page-numbers {
+                display: flex;
+                gap: 4px;
+            }
 
-        .header-meta-name {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--w-300);
-        }
+            .empty-state {
+                padding: 44px 24px;
+                text-align: center;
+                font-size: 13px;
+                color: var(--b-400);
+                font-style: italic;
+            }
 
-        /* ━━━━━━ TICKER STRIP ━━━━━━ */
-        .ticker-strip {
-            background: var(--w-400);
-            border-bottom: var(--border);
-            padding: 9px 56px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+            @media (max-width: 1100px) {
+                .stats-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+            @media (max-width: 680px) {
+                .site-header {
+                    padding: 22px 24px;
+                    flex-direction: column;
+                    gap: 18px;
+                    align-items: flex-start;
+                }
+                .ticker-strip {
+                    padding: 9px 24px;
+                }
+                .main-content {
+                    padding: 32px 24px;
+                    gap: 28px;
+                }
+                .stats-grid {
+                    grid-template-columns: 1fr 1fr;
+                    gap: 14px;
+                }
+                .stat-value {
+                    font-size: 34px;
+                }
+                .header-meta {
+                    text-align: left;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header class="site-header">
+            <div>
+                <h1 class="header-title">Entrance Test Assessment Dashboard</h1>
+            </div>
+        </header>
 
-        .ticker-dot {
-            width: 5px;
-            height: 5px;
-            background: var(--b-900);
-            border-radius: 50%;
-        }
-
-        .ticker-text {
-            font-family: 'DM Mono', monospace;
-            font-size: 10.5px;
-            color: var(--b-800);
-            letter-spacing: 0.04em;
-        }
-
-        /* ━━━━━━ MAIN ━━━━━━ */
-        .main-content {
-            max-width: 1360px;
-            margin: 0 auto;
-            padding: 52px 56px;
-            display: flex;
-            flex-direction: column;
-            gap: 48px;
-        }
-
-        /* ━━━━━━ STATS ━━━━━━ */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 18px;
-        }
-
-        .stat-card {
-            background: var(--w-50);
-            border: var(--border);
-            box-shadow: var(--shadow);
-            padding: 26px 22px 22px;
-            position: relative;
-            transition: transform 0.12s ease, box-shadow 0.12s ease;
-            overflow: hidden;
-        }
-
-        .stat-card:hover {
-            transform: translate(-2px, -2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        /* Solid top bar per card — structural accent */
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 3px;
-            background: var(--b-900);
-        }
-
-        .stat-label {
-            font-size: 9.5px;
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
-            color: var(--b-500);
-            font-weight: 600;
-            margin-bottom: 14px;
-            display: block;
-        }
-
-        .stat-value {
-            font-family: 'DM Mono', monospace;
-            font-size: 44px;
-            font-weight: 400;
-            color: var(--b-900);
-            line-height: 1;
-            letter-spacing: -0.025em;
-        }
-
-        /* ━━━━━━ SECTION LABEL ━━━━━━ */
-        .section-label {
-            font-size: 9.5px;
-            letter-spacing: 0.24em;
-            text-transform: uppercase;
-            color: var(--b-600);
-            font-weight: 600;
-        }
-
-        /* ━━━━━━ CONTENT GRID ━━━━━━ */
-        .content-grid {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) minmax(0, 2.3fr);
-            gap: 22px;
-            align-items: start;
-        }
-
-        /* ━━━━━━ PANEL ━━━━━━ */
-        .panel {
-            background: var(--w-50);
-            border: var(--border);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-
-        .panel-header {
-            background: var(--w-200);
-            padding: 15px 22px;
-            border-bottom: var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        /* ━━━━━━ MERIT LIST ━━━━━━ */
-        .merit-list { padding: 4px 0 8px; }
-
-        .merit-item {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 13px 22px;
-            border-bottom: var(--border-thin);
-            transition: background 0.1s;
-        }
-
-        .merit-item:last-child { border-bottom: none; }
-        .merit-item:hover { background: var(--w-100); }
-
-        .merit-rank {
-            font-family: 'DM Mono', monospace;
-            font-size: 10px;
-            color: var(--b-300);
-            width: 16px;
-            flex-shrink: 0;
-            font-style: italic;
-        }
-
-        .merit-info { flex: 1; min-width: 0; }
-
-        .merit-name {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--b-800);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .merit-roll {
-            font-family: 'DM Mono', monospace;
-            font-size: 10px;
-            color: var(--b-400);
-            margin-top: 3px;
-        }
-
-        .merit-score-badge {
-            font-family: 'DM Mono', monospace;
-            font-size: 11.5px;
-            font-weight: 500;
-            background: var(--b-900);
-            color: var(--w-100);
-            padding: 5px 11px;
-            flex-shrink: 0;
-            letter-spacing: 0.05em;
-        }
-
-        /* ━━━━━━ TABLE ━━━━━━ */
-        .table-wrap { overflow-x: auto; }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        thead {
-            background: var(--w-200);
-            border-bottom: var(--border);
-        }
-
-        th {
-            padding: 13px 20px;
-            font-size: 9px;
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
-            color: var(--b-500);
-            font-weight: 600;
-            text-align: left;
-            white-space: nowrap;
-        }
-
-        th.center { text-align: center; }
-
-        tbody tr {
-            border-bottom: var(--border-thin);
-            transition: background 0.1s;
-        }
-
-        tbody tr:nth-child(even) { background: rgba(224, 207, 164, 0.22); }
-        tbody tr:hover { background: var(--w-200); }
-        tbody tr:last-child { border-bottom: none; }
-
-        td {
-            padding: 14px 20px;
-            vertical-align: middle;
-        }
-
-        .td-roll {
-            font-family: 'DM Mono', monospace;
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--b-900);
-            white-space: nowrap;
-        }
-
-        .td-name {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--b-900);
-        }
-
-        .td-cnic {
-            font-family: 'DM Mono', monospace;
-            font-size: 10.5px;
-            color: var(--b-400);
-            margin-top: 3px;
-        }
-
-        .td-email {
-            font-size: 12px;
-            color: var(--b-600);
-        }
-
-        .td-phone {
-            font-family: 'DM Mono', monospace;
-            font-size: 11px;
-            color: var(--b-400);
-            margin-top: 3px;
-        }
-
-        .score-chip {
-            font-family: 'DM Mono', monospace;
-            font-size: 12px;
-            font-weight: 500;
-            padding: 4px 14px;
-            display: inline-block;
-            border: var(--border);
-            min-width: 52px;
-            text-align: center;
-        }
-
-        .score-chip.high {
-            background: var(--b-900);
-            color: var(--w-100);
-        }
-
-        .score-chip.low {
-            background: transparent;
-            color: var(--b-600);
-        }
-
-        .td-score { text-align: center; }
-
-        /* ━━━━━━ EMPTY STATE ━━━━━━ */
-        .empty-state {
-            padding: 44px 24px;
-            text-align: center;
-            font-size: 13px;
-            color: var(--b-400);
-            font-style: italic;
-        }
-
-        /* ━━━━━━ RESPONSIVE ━━━━━━ */
-        @media (max-width: 1100px) {
-            .content-grid { grid-template-columns: 1fr; }
-            .stats-grid   { grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (max-width: 680px) {
-            .site-header  { padding: 22px 24px; flex-direction: column; gap: 18px; align-items: flex-start; }
-            .ticker-strip { padding: 9px 24px; }
-            .main-content { padding: 32px 24px; gap: 36px; }
-            .stats-grid   { grid-template-columns: 1fr 1fr; gap: 14px; }
-            .stat-value   { font-size: 34px; }
-            .header-meta  { text-align: left; }
-        }
-    </style>
-</head>
-<body>
-
-    <header class="site-header">
-        <div>
-            <p class="header-eyebrow">Course — CS160 Database Systems</p>
-            <h1 class="header-title">Entrance Assessment Dashboard</h1>
+        <div class="ticker-strip">
+            <span class="ticker-dot"></span>
+            <span class="ticker-text">Dashboard View</span>
         </div>
-        <div class="header-meta">
-            <p class="header-meta-label">Instructor</p>
-            <p class="header-meta-name">Ms. Saima Yasmeen</p>
-        </div>
-    </header>
 
-    <div class="ticker-strip">
-        <span class="ticker-dot"></span>
-        <span class="ticker-text">Semester Entrance · Cohort Overview · Read-Only View</span>
-    </div>
-
-    <main class="main-content">
-
-        <!-- ── Stats ── -->
-        <section class="stats-grid" aria-label="Summary statistics">
-            <div class="stat-card">
-                <span class="stat-label">Enrolled Applicants</span>
-                <p class="stat-value">{{ stats.total_candidates }}</p>
-            </div>
-            <div class="stat-card">
-                <span class="stat-label">Cohort Mean Score</span>
-                <p class="stat-value">{{ stats.avg_score }}</p>
-            </div>
-            <div class="stat-card">
-                <span class="stat-label">Highest Marks</span>
-                <p class="stat-value">{{ stats.max_score }}</p>
-            </div>
-            <div class="stat-card">
-                <span class="stat-label">Minimum Marks</span>
-                <p class="stat-value">{{ stats.min_score }}</p>
-            </div>
-        </section>
-
-        <!-- ── Content Grid ── -->
-        <div class="content-grid">
-
-            <!-- Merit List -->
-            <section class="panel" aria-label="Top performing candidates">
-                <div class="panel-header">
-                    <span class="section-label">Top Performers</span>
+        <main class="main-content">
+            <!-- Stats -->
+            <section class="stats-grid" aria-label="Summary statistics">
+                <div class="stat-card">
+                    <span class="stat-label">Enrolled Applicants</span>
+                    <p class="stat-value">{{ stats.total_candidates }}</p>
                 </div>
-                <div class="merit-list">
-                    {% for student in merit_list %}
-                    <div class="merit-item">
-                        <span class="merit-rank">{{ loop.index }}</span>
-                        <div class="merit-info">
-                            <p class="merit-name">{{ student.name }}</p>
-                            <p class="merit-roll">{{ student.roll_no }}</p>
-                        </div>
-                        <span class="merit-score-badge">{{ student.score }}</span>
-                    </div>
-                    {% else %}
-                    <p class="empty-state">No performer data available.</p>
-                    {% endfor %}
+                <div class="stat-card">
+                    <span class="stat-label">Cohort Mean Score</span>
+                    <p class="stat-value">{{ stats.avg_score }}</p>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Highest Marks</span>
+                    <p class="stat-value">{{ stats.max_score }}</p>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Minimum Marks</span>
+                    <p class="stat-value">{{ stats.min_score }}</p>
                 </div>
             </section>
 
-            <!-- Roster Table -->
+            <!-- Paginated Roster -->
             <section class="panel" aria-label="Student registration directory">
                 <div class="panel-header">
-                    <span class="section-label">Student Registration Directory</span>
+                    <span class="section-label"
+                        >Student Registration Directory</span
+                    >
+                    <span
+                        class="section-label"
+                        id="count-label"
+                        style="color: var(--b-400)"
+                    ></span>
                 </div>
                 <div class="table-wrap">
                     <table>
                         <thead>
                             <tr>
+                                <th>#</th>
                                 <th>Roll No</th>
                                 <th>Name</th>
                                 <th>Contact</th>
                                 <th class="center">Score</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="roster-body">
                             {% for row in roster %}
-                            <tr>
-                                <td><span class="td-roll">{{ row.roll_no }}</span></td>
+                            <tr
+                                data-id="{{ row.id }}"
+                                data-roll="{{ row.roll_no }}"
+                                data-name="{{ row.name }}"
+                                data-cnic="{{ row.cnic }}"
+                                data-email="{{ row.email }}"
+                                data-phone="{{ row.phone }}"
+                                data-score="{{ row.score }}"
+                            >
+                                <td>
+                                    <span
+                                        class="td-roll"
+                                        style="color: var(--b-300)"
+                                        >{{ loop.index }}</span
+                                    >
+                                </td>
+                                <td>
+                                    <span class="td-roll"
+                                        >{{ row.roll_no }}</span
+                                    >
+                                </td>
                                 <td>
                                     <p class="td-name">{{ row.name }}</p>
                                     <p class="td-cnic">{{ row.cnic }}</p>
@@ -461,23 +454,118 @@
                                     <p class="td-phone">{{ row.phone }}</p>
                                 </td>
                                 <td class="td-score">
-                                    <span class="score-chip {% if row.score >= 4 %}high{% else %}low{% endif %}">
+                                    <span
+                                        class="score-chip {% if row.score >= 4 %}high{% else %}low{% endif %}"
+                                    >
                                         {{ row.score }}
                                     </span>
                                 </td>
                             </tr>
                             {% else %}
                             <tr>
-                                <td colspan="4" class="empty-state">No student records found.</td>
+                                <td colspan="5" class="empty-state">
+                                    No student records found.
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
+                <div class="pagination">
+                    <span class="page-info" id="page-info">—</span>
+                    <div class="page-controls">
+                        <button
+                            class="page-btn"
+                            id="btn-prev"
+                            onclick="changePage(-1)"
+                            disabled
+                        >
+                            ← Prev
+                        </button>
+                        <div class="page-numbers" id="page-numbers"></div>
+                        <button
+                            class="page-btn"
+                            id="btn-next"
+                            onclick="changePage(1)"
+                        >
+                            Next →
+                        </button>
+                    </div>
+                </div>
             </section>
+        </main>
 
-        </div>
-    </main>
+        <script>
+            const PER_PAGE = 15;
+            let currentPage = 1;
+            const allRows = Array.from(
+                document.querySelectorAll("#roster-body tr[data-id]"),
+            );
+            const total = allRows.length;
+            const totalPages = Math.ceil(total / PER_PAGE);
 
-</body>
+            function renderPage(page) {
+                currentPage = page;
+                const start = (page - 1) * PER_PAGE;
+                const end = start + PER_PAGE;
+                allRows.forEach(
+                    (r, i) =>
+                        (r.style.display = i >= start && i < end ? "" : "none"),
+                );
+                document.getElementById("page-info").textContent =
+                    `Showing ${start + 1}–${Math.min(end, total)} of ${total} students`;
+                document.getElementById("count-label").textContent =
+                    `Page ${page} / ${totalPages}`;
+                document.getElementById("btn-prev").disabled = page === 1;
+                document.getElementById("btn-next").disabled =
+                    page === totalPages;
+                renderPageNumbers();
+            }
+
+            function renderPageNumbers() {
+                const container = document.getElementById("page-numbers");
+                container.innerHTML = "";
+                const range = getPageRange(currentPage, totalPages);
+                range.forEach((p) => {
+                    if (p === "…") {
+                        const s = document.createElement("span");
+                        s.textContent = "…";
+                        s.style.cssText =
+                            "font-family:DM Mono,monospace;font-size:11px;padding:7px 6px;color:var(--b-400)";
+                        container.appendChild(s);
+                    } else {
+                        const btn = document.createElement("button");
+                        btn.className =
+                            "page-btn" + (p === currentPage ? " active" : "");
+                        btn.textContent = p;
+                        btn.style.minWidth = "36px";
+                        btn.onclick = () => renderPage(p);
+                        container.appendChild(btn);
+                    }
+                });
+            }
+
+            function getPageRange(cur, max) {
+                if (max <= 7)
+                    return Array.from({ length: max }, (_, i) => i + 1);
+                if (cur <= 4) return [1, 2, 3, 4, 5, "…", max];
+                if (cur >= max - 3)
+                    return [1, "…", max - 4, max - 3, max - 2, max - 1, max];
+                return [1, "…", cur - 1, cur, cur + 1, "…", max];
+            }
+
+            function changePage(dir) {
+                renderPage(currentPage + dir);
+            }
+
+            // Row click → detail page
+            allRows.forEach((row) => {
+                row.addEventListener("click", () => {
+                    window.location.href = `/admin/student/${row.dataset.id}`;
+                });
+            });
+
+            renderPage(1);
+        </script>
+    </body>
 </html>

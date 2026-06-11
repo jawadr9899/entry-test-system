@@ -52,3 +52,18 @@ class UserStatsManager:
                 ORDER BY roll_no ASC
             """)
             return [dict(row) for row in cur.fetchall()]
+
+    @staticmethod
+    def get_student_by_id(db_path: str, student_id: int) -> dict | None:
+        """Fetches a single student record by primary key."""
+        db_real_path = os.path.abspath(db_path)
+        with UserStatsManager.get_db_connection(db_real_path) as conn:
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT id, name, roll_no, email, phone, cnic, score, pic_path "
+                "FROM users WHERE id = ?",
+                (student_id,)
+            )
+            row = cur.fetchone()
+            return dict(row) if row else None
+    

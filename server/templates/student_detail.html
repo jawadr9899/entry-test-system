@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS160 — {{ student.name }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --w-50:#FDFBF4;--w-100:#F7EED8;--w-200:#EFE2BF;--w-300:#E2CFA4;--w-400:#CEBB88;
+            --b-900:#0D0D0A;--b-800:#1C1C17;--b-600:#484840;--b-500:#69695F;--b-400:#8C8C80;--b-300:#B8B8AC;
+            --border:2px solid var(--b-900);--shadow:4px 4px 0px var(--b-900);--shadow-lg:6px 6px 0px var(--b-900);
+        }
+        body { font-family:'Space Grotesk',-apple-system,sans-serif; background:var(--w-100); color:var(--b-900); min-height:100vh; -webkit-font-smoothing:antialiased; }
+
+        .site-header { background:var(--b-900); padding:24px 56px; display:flex; align-items:center; gap:20px; }
+        .back-btn { font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.06em; color:var(--w-300); background:var(--b-800); border:1px solid var(--b-600); padding:8px 16px; cursor:pointer; text-decoration:none; transition:all .12s; }
+        .back-btn:hover { background:var(--w-400); color:var(--b-900); border-color:var(--w-400); }
+        .header-eyebrow { font-size:9.5px; letter-spacing:.28em; text-transform:uppercase; color:var(--b-400); font-weight:500; margin-bottom:6px; }
+        .header-title { font-size:21px; font-weight:600; color:var(--w-50); letter-spacing:-.03em; }
+
+        .main-content { max-width:960px; margin:0 auto; padding:48px 56px; display:flex; flex-direction:column; gap:28px; }
+
+        /* Identity Block */
+        .identity-block { background:var(--w-50); border:var(--border); box-shadow:var(--shadow-lg); display:flex; align-items:stretch; overflow:hidden; }
+        .identity-avatar { width:140px; flex-shrink:0; background:var(--b-900); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:28px 20px; }
+        .avatar-img { width:72px; height:72px; border-radius:50%; object-fit:cover; border:2px solid var(--b-600); }
+        .avatar-placeholder { width:72px; height:72px; border-radius:50%; background:var(--b-700); border:2px solid var(--b-600); display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:600; color:var(--w-300); letter-spacing:-.02em; }
+        .avatar-roll { font-family:'DM Mono',monospace; font-size:9.5px; color:var(--b-400); letter-spacing:.08em; text-align:center; }
+
+        .identity-info { flex:1; padding:28px 32px; display:flex; flex-direction:column; justify-content:center; gap:6px; border-left:var(--border); }
+        .identity-name { font-size:26px; font-weight:600; color:var(--b-900); letter-spacing:-.03em; line-height:1.15; }
+        .identity-sub { font-family:'DM Mono',monospace; font-size:11.5px; color:var(--b-500); }
+
+        .identity-score { flex-shrink:0; padding:28px 32px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; border-left:var(--border); background:var(--w-100); min-width:110px; }
+        .score-label { font-size:8.5px; letter-spacing:.24em; text-transform:uppercase; color:var(--b-500); font-weight:600; }
+        .score-big { font-family:'DM Mono',monospace; font-size:52px; font-weight:400; color:var(--b-900); line-height:1; letter-spacing:-.03em; }
+        .score-badge { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:.12em; text-transform:uppercase; padding:4px 10px; border:var(--border); margin-top:4px; }
+        .score-badge.pass { background:var(--b-900); color:var(--w-100); }
+        .score-badge.fail { background:transparent; color:var(--b-500); }
+
+        /* Detail Grid */
+        .detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+        .detail-card { background:var(--w-50); border:var(--border); box-shadow:var(--shadow); padding:22px 24px; position:relative; overflow:hidden; }
+        .detail-card::before { content:''; position:absolute; top:0;left:0; width:3px; height:100%; background:var(--b-900); }
+        .detail-card-label { font-size:9px; letter-spacing:.24em; text-transform:uppercase; color:var(--b-400); font-weight:600; margin-bottom:10px; }
+        .detail-card-value { font-family:'DM Mono',monospace; font-size:15px; font-weight:500; color:var(--b-800); word-break:break-all; }
+        .detail-card-value.email { font-size:13px; }
+
+        @media(max-width:700px){
+            .site-header{padding:20px 24px;}
+            .main-content{padding:28px 24px;}
+            .identity-block{flex-direction:column;}
+            .identity-avatar{width:100%;flex-direction:row;padding:20px 24px;gap:16px;}
+            .identity-score{border-left:none;border-top:var(--border);flex-direction:row;gap:16px;justify-content:flex-start;padding:20px 24px;}
+            .detail-grid{grid-template-columns:1fr;}
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <a href="/admin/dashboard" class="back-btn">← Back to Dashboard</a>
+        <div>
+            <p class="header-eyebrow">CS160 Database Systems — Student Record</p>
+            <h1 class="header-title">{{ student.name }}</h1>
+        </div>
+    </header>
+
+    <main class="main-content">
+
+        <!-- Identity Block -->
+        <div class="identity-block">
+            <div class="identity-avatar">
+                {% if student.pic_path %}
+                <img class="avatar-img" src="{{ student.pic_path }}" alt="{{ student.name }}">
+                {% else %}
+                <div class="avatar-placeholder">{{ student.name[0] | upper }}</div>
+                {% endif %}
+                <span class="avatar-roll">{{ student.roll_no }}</span>
+            </div>
+
+            <div class="identity-info">
+                <p class="identity-name">{{ student.name }}</p>
+                <p class="identity-sub">{{ student.email }}</p>
+                <p class="identity-sub" style="margin-top:4px">{{ student.phone }}</p>
+            </div>
+
+            <div class="identity-score">
+                <span class="score-label">Score</span>
+                <span class="score-big">{{ student.score }}</span>
+                <span class="score-badge {% if student.score >= 4 %}pass{% else %}fail{% endif %}">
+                    {% if student.score >= 4 %}Pass{% else %}Below Avg{% endif %}
+                </span>
+            </div>
+        </div>
+
+        <!-- Detail Cards -->
+        <div class="detail-grid">
+            <div class="detail-card">
+                <p class="detail-card-label">Roll Number</p>
+                <p class="detail-card-value">{{ student.roll_no }}</p>
+            </div>
+            <div class="detail-card">
+                <p class="detail-card-label">CNIC</p>
+                <p class="detail-card-value">{{ student.cnic }}</p>
+            </div>
+            <div class="detail-card">
+                <p class="detail-card-label">Email Address</p>
+                <p class="detail-card-value email">{{ student.email }}</p>
+            </div>
+            <div class="detail-card">
+                <p class="detail-card-label">Phone Number</p>
+                <p class="detail-card-value">{{ student.phone }}</p>
+            </div>
+            <div class="detail-card">
+                <p class="detail-card-label">Assessment Score</p>
+                <p class="detail-card-value">{{ student.score }} / 10</p>
+            </div>
+            <div class="detail-card">
+                <p class="detail-card-label">Student ID</p>
+                <p class="detail-card-value">{{ student.id }}</p>
+            </div>
+        </div>
+
+    </main>
+</body>
+</html>
